@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow-client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow-client
+  template:
+    metadata:
+      labels:
+        app: mlflow-client
+    spec:
+      containers:
+      - name: mlflow-client
+        image: localhost:5000/mlflow-client:latest
+        env:
+        - name: MLFLOW_TRACKING_URI
+          value: http://mlflow:5000  # This should match the MLflow service name in your cluster
+        volumeMounts:
+        - mountPath: "/app"          # Adjust if your code needs a specific path
+          name: mlflow-repo
+      volumes:
+      - name: mlflow-repo
+        emptyDir: {}
+      nodeSelector:
+        role: benchmark
+
